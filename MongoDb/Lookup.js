@@ -6,38 +6,13 @@
 
 // Syntax -> Left Outer Join
 
-// db.collection_name.aggregate([
-//     {
-//         $lookup: {
-//             from: 'foreignCollection',
-//             localField: localField,
-//             foreignField: "foreignField",
-//             as: "outPutArray"
-//         }
-//     }
-// ])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+db.collection_name.aggregate([
+    {
+        $lookup: {
+            from: 'foreignCollection',
+            localField: localField,
+            foreignField: "foreignField",
+            as: "outPutArray"
+        }
+    }
+])
