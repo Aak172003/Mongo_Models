@@ -171,11 +171,61 @@ db.products.updateMany({ 'price': { $eq: 120 } }, {
 // 2. Removing and renaming fields
 // -------------------------------
 
-// syntax -
-// db.collection_name.updateOne({ filter }, { $unset: { fieldName: 1 } })
+// syntax - For Removing the field
+db.collection_name.updateOne({ filter }, { $unset: { fieldName: 1 } })
 
-// 3. Adding, removing items from array
-// 4. Updating embedded documents
+// Ex -
+
+db.products.updateMany({ price: 123 }, { $unset: { category: 1, modified: 1 } })
+// or 
+
+db.products.updateMany({ price: 123 }, { $unset: { name: "", colors: "" } })
+
+// Syntx - For Rename the fields
+// db.collection_name.updateOne({ filter }, { $rename: { 'oldfileName': 'newFileName' } })
+
+// Ex - 
+db.products.updateMany({ price: { $eq: 123 } }, { $rename: { 'isFeatured': 'modified' } })
+
+// To see the changes 
+db.products.find({ price: { $eq: 123 } })
+
+
+// -------------------------------------------------------------------------------
+
+// 3. Adding a new Field
+// ---------------------
+
+// Ex - 
+db.products.updateOne({ price: 123 }, { $set: { Aakash: 'My Name is Aakash' } })
+
+// -------------------------------------------------------------------------------
+
+// 4 Delete Operation In MongoDB
+// -----------------------------
+
+// db.collection_name.deleteOne({ filter })
+
+// db.collection_name.deleteMany({ filter })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
