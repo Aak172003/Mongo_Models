@@ -8,46 +8,50 @@ db.collection_name.find({})
 // but if i want to send only some fields , so prefer projecion
 
 db.products.find({}, { name: 1, price: 1, colors: 1, image: 1, category: 1 })
-// those field i want, just put 1 and rest is 0, means not show in our document
+// those field i want, just put 1 and those i don't want just put 0 in front of this, means not show in our document
 
 db.comments.find({ comments: { $size: 4 } }, { comments: 1 })
-// Note:
+
+// --------------------------------------------------------------------------------------------------
+// 
+
+Note:
 // either we go for 1 1 1 or 0 0 0 not consider  1 0 1 0 1 0 1
-[
-    {
-        _id: 1,
-        title: 'Introduction to MongoDB',
-        content: 'MongoDB is a popular NoSQL database...',
-        author: 'John Doe',
-        comments: [
-            { user: 'Alice', text: 'Great article!' },
-            { user: 'Bob', text: 'Thanks for sharing.' },
-            { user: 'Eva', text: 'Its beatifull!' },
-            { user: 'jessy' }
-        ],
-        metadata: { views: 1000, likes: 50 }
-    }
-]
+
+// [
+//     {
+//         _id: 1,
+//         title: 'Introduction to MongoDB',
+//         content: 'MongoDB is a popular NoSQL database...',
+//         author: 'John Doe',
+//         comments: [
+//             { user: 'Alice', text: 'Great article!' },
+//             { user: 'Bob', text: 'Thanks for sharing.' },
+//             { user: 'Eva', text: 'Its beatifull!' },
+//             { user: 'jessy' }
+//         ],
+//         metadata: { views: 1000, likes: 50 }
+//     }
+// ]
 
 db.comments.find({ comments: { $size: 4 } }, { comments: 1, content: 1 })
-[
-    {
-        _id: 1,
-        content: 'MongoDB is a popular NoSQL database...',
-        comments: [
-            { user: 'Alice', text: 'Great article!' },
-            { user: 'Bob', text: 'Thanks for sharing.' },
-            { user: 'Eva', text: 'Its beatifull!' },
-            { user: 'jessy' }
-        ]
-    }
-]
+// [
+//     {
+//         _id: 1,
+//         content: 'MongoDB is a popular NoSQL database...',
+//         comments: [
+//             { user: 'Alice', text: 'Great article!' },
+//             { user: 'Bob', text: 'Thanks for sharing.' },
+//             { user: 'Eva', text: 'Its beatifull!' },
+//             { user: 'jessy' }
+//         ]
+//     }
+// ]
 
 // -------------------------------------------------------------------------------
 
 // Embedded Documents  -> Query documents inside embedded documents using dot notation.
-// db.collection.find({ “parent.child.grandson”: value })
-
+// db.collection.find({ “parent.child.subchild.sub-sub-child”: value })
 
 db.comments.find({ 'comments.user': 'Lily' })
 
@@ -75,8 +79,9 @@ db.comments.find(
 // We Need to find out the documents where the user in comments  ,
 // is Alice and Vinod
 
-// $all -> We need $all where order , where the order does/t matter 
+// -------------------------------------------------------------------------------
 
+// $all -> We need $all where order , where the order does/t matter 
 db.comments.find({ 'comments.user': { $all: ['Alice', 'Vinod'] } })
 
 [
@@ -93,6 +98,7 @@ db.comments.find({ 'comments.user': { $all: ['Alice', 'Vinod'] } })
     }
 ]
 
+// -------------------------------------------------------------------------------
 
 // $elematch 
 
@@ -160,11 +166,13 @@ db.products.updateOne({ 'name': { $eq: 'Designer Handbag' } },
 db.products.find({ 'price': 120 })
 
 // Update
-db.products.updateMany({ 'price': { $eq: 120 } }, {
-    $set: {
-        'isFeatured': false
+db.products.updateMany({ 'price': { $eq: 120 } },
+    {
+        $set: {
+            'isFeatured': false
+        }
     }
-})
+)
 
 // -------------------------------------------------------------------------------
 
@@ -172,20 +180,36 @@ db.products.updateMany({ 'price': { $eq: 120 } }, {
 // -------------------------------
 
 // syntax - For Removing the field
-db.collection_name.updateOne({ filter }, { $unset: { fieldName: 1 } })
+db.collection_name.updateOne({ filter },
+    {
+        $unset: { fieldName: 1 }
+    }
+)
 
 // Ex -
 
-db.products.updateMany({ price: 123 }, { $unset: { category: 1, modified: 1 } })
+db.products.updateMany({ price: 123 },
+    {
+        $unset:
+            { category: 1, modified: 1 }
+    })
 // or 
 
-db.products.updateMany({ price: 123 }, { $unset: { name: "", colors: "" } })
+db.products.updateMany({ price: 123 },
+    {
+        $unset: { name: "", colors: "" }
+    }
+)
 
 // Syntx - For Rename the fields
 // db.collection_name.updateOne({ filter }, { $rename: { 'oldfileName': 'newFileName' } })
 
 // Ex - 
-db.products.updateMany({ price: { $eq: 123 } }, { $rename: { 'isFeatured': 'modified' } })
+db.products.updateMany({ price: { $eq: 123 } },
+    {
+        $rename:
+            { 'isFeatured': 'modified' }
+    })
 
 // To see the changes 
 db.products.find({ price: { $eq: 123 } })
@@ -204,31 +228,6 @@ db.products.updateOne({ price: 123 }, { $set: { Aakash: 'My Name is Aakash' } })
 // 4 Delete Operation In MongoDB
 // -----------------------------
 
-// db.collection_name.deleteOne({ filter })
+db.collection_name.deleteOne({ filter })
 
-// db.collection_name.deleteMany({ filter })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+db.collection_name.deleteMany({ filter })
