@@ -1,6 +1,5 @@
 
 // Definition: Aggregation is the process of performing transformations on documents and combining them to produce computed results.
-
 // Pipeline Stages: Aggregations consist of multiple pipeline stages, each performing a specific operation on the input data.
 
 // Benefits -> chaining method (Like Javascript)
@@ -9,11 +8,10 @@
 // 2. Advanced Transformations: Data can be combined, reshaped, and computed for insights.
 // 3. Efficient Processing: Aggregation handles large datasets efficiently
 
-
 // Aggregation Operations
 // ----------------------
 
-// $match -> The $match stafe filters documents based on specified conditions
+// $match -> The $match state filters documents based on specified conditions
 
 db.products.aggregate([{ $match: { name: "Sleek Wooden Tuna" } }])
 
@@ -32,9 +30,12 @@ db.products.aggregate(
 
 // Ex -
 
-// Find same company in whole documents
+// Find same company in whole documents , and group 
 db.products.aggregate([{
     $group: {
+        // Id is compulsory , because group function make group via some uniqe field
+         // company has comany id , 
+        // if same company id , then similar documents increase its count   
         _id: '$company',
         totalProducts: { $sum: 1 },
     }
@@ -43,13 +44,15 @@ db.products.aggregate([{
 // Find same company in whole documents and sum price of same documents 
 db.products.aggregate([{
     $group: {
+        // company has comany id , 
+        // if same company id , then documents add its price and  
         _id: '$company',
-        totalProducts: { $sum: '$price' },
+        totalPrice: { $sum: '$price' },
     }
 }])
 
 
-// If price greater than 900 , then perform addition of price of same company 
+// If price greater than 1200 , then perform addition of price of same company 
 db.products.aggregate([
     {
         $match: {
@@ -76,10 +79,11 @@ db.sales.aggregate([
     {
         $group: {
             _id: '$quantity',
-            // This find Sum of price
+             // This find Sum of price
             priceSum: { $sum: '$price' },
             // this find Average of price
-            priceAvg: { $avg: '$price' }
+            priceAvg: { $avg: '$price' },
+           
         }
     }
 ])
@@ -103,6 +107,8 @@ db.products.aggregate([
     {
         // Apply sort only on given fields 
         $sort: {
+            // -1 for descending order
+            // 1 for ascending order
             totalProducts: -1
         }
     }
@@ -138,17 +144,20 @@ db.products.aggregate([
     }
 ])
 
+// -------------------------------------------------------------------------------
 
-// $unwind - >
+// $unwind - > make a seperate documents according to array, 
+// [1,2,3,4,5,6] lets say if a document have array like this , so if i apply unwind in this array 
+// So this will create a document 6 times and all array replace with single digit accoring to index
 
 db.products.aggregate([
-    {
-        $unwind: '$colors'
-    },
-    {
+      {
         $match: {
             price: { $gt: 1200 }
         }
+    },
+    {
+        $unwind: '$colors'
     },
     {
         $group: {
@@ -158,27 +167,15 @@ db.products.aggregate([
     }
 ])
 
+//  Example Of -> $unwind Operator  
 db.products.aggregate([
-    {
-        $unwind: '$colors'
-    },
     {
         $match: {
             price: { $gt: 1200 }
         }
-    },
-    {
-        $group: {
-            _id: '$price',
-            allcolors: { $addToSet: '$colors' }
-        }
-    }
-])
+    }])
 
-
-// Ex - 
-
-db.products.find({ price: { $gt: 1200 } })
+// Result
 [
     {
         _id: ObjectId("64c23601e32f4a51b19b9263"),
@@ -190,8 +187,6 @@ db.products.find({ price: { $gt: 1200 } })
         category: '64c2342de32f4a51b19b924e',
         isFeatured: true
     },
-
-    // Below two documents have same price s
     {
         _id: ObjectId("64c236a2e32f4a51b19b9281"),
         name: 'Diamond Ring',
@@ -214,10 +209,24 @@ db.products.find({ price: { $gt: 1200 } })
     }
 ]
 
-// Here i get similar data 
-db.products.aggregate([{ $unwind: '$colors' }, { $match: { price: { $gt: 1200 } } }, { $group: { _id: '$price', allcolors: { $push: '$colors' } } }])
+db.products.aggregate([
+    {
+        $match: { price: { $gt: 1200 } }
+    },
+    {
+        $unwind: '$colors'
+    },
+    {
+        $group: {
+            _id: '$price',
+            allcolors: {
+                $push: '$colors'
+            }
+        }
+    }])
+
+// Result
 [
-    { _id: 1299, allcolors: ['#333333', '#cccccc', '#00ff00'] },
     {
         _id: 1999,
         allcolors: [
@@ -228,8 +237,14 @@ db.products.aggregate([{ $unwind: '$colors' }, { $match: { price: { $gt: 1200 } 
             '#cc6600',
             '#663300'
         ]
-    }
+    },
+    { _id: 1299, allcolors: ['#333333', '#cccccc', '#00ff00'] }
 ]
+
+// -------------------------------------------------------------------------------
+
+$push -> add the duplicate data into array 
+$addToSet But this add only unique elemets 
 
 // Here i get only unique colors from both same documets whose price is 1999
 db.products.aggregate([{ $unwind: '$colors' }, { $match: { price: { $gt: 1200 } } }, { $group: { _id: '$price', allcolors: { $addToSet: '$colors' } } }])
@@ -237,16 +252,3 @@ db.products.aggregate([{ $unwind: '$colors' }, { $match: { price: { $gt: 1200 } 
     { _id: 1299, allcolors: ['#cccccc', '#333333', '#00ff00'] },
     { _id: 1999, allcolors: ['#663300', '#cc6600', '#000000'] }
 ]
-
-// -------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
