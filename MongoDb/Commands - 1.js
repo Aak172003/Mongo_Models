@@ -219,10 +219,10 @@ db.sales.find({ $expr: { $lt: [{ $multiply: ['$_id', '$price'] }, '$targetPrice'
 
 // 1. exist -> matches documents that have a specific field, regardless of its value.
 
-// get price exist documents
+// return those documents who has field which name as price
 db.products.find({ price: { $exists: true } }).count()
 
-// check and get price not exist document 
+// return those documents who has not exist field which name as price
 db.products.find({ price: { $exists: false } }).count()
 
 
