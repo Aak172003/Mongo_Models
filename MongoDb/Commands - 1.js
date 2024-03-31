@@ -3,7 +3,8 @@
 // db.dropDatabase_Name();
 
 // Note -> If that db is not exist then it craete why i execute use db_name query
-// If i move to any database via using use db_name command , then db represnts to that db
+// If i move to any database via using use db_name command , 
+// then db represnts to that that particular database
 
 // ---------------------------------------------------------------------------------------------------------
 
@@ -19,6 +20,7 @@
 db.collection_name.insertOne({})
 db.collection_name.insertMany([{}, {}, {}, {}])
 
+// ------------------------------------------------------------------------------------------------------------
 
 // Order Insert -> When executing bulk write operations, "ordered" and "unordered" determine the batch behavior.
 // ------------
@@ -40,8 +42,7 @@ db.selfCreatedCollection.insertMany([
 
 
 // Unordered Inserts
-// When executing bulk write operations with unordered flag, MongoDB continues processing
-// after encountering an error.
+// When executing bulk write operations with unordered flag, MongoDB continues processing after encountering an error.
 // db.<collection_name>.insertMany([doc1, doc2, ... ], { ordered: false });
 
 db.selfCreatedCollection.insertMany([
@@ -56,7 +57,7 @@ db.selfCreatedCollection.insertMany([
     { 'name': 'Ajay', 'age': 28 }
 ], { ordered: false })
 
-// Read Operations in MongoDB
+// ------------------------------------------------------------------------------------------------------------
 
 // Inserting Documents in MongoDB
 // ----------------------------
@@ -98,7 +99,9 @@ db.products.find({ 'price': { $lt: 1200 } })
 // 6. less than equal to -> $lte
 db.products.find({ 'price': { $lte: 1299 } })
 
-// 7. in operator
+// 7. in operator -> return those elements who has price equal to which is mention in array 
+// { 'price': { $in: [1299, 299, 799, 149] } }
+
 db.products.find({ 'price': { $in: [1299, 299, 799, 149] } }).count()
 
 // 8. not in Operator
@@ -135,6 +138,7 @@ db.products.find({ 'price': { $eq: 100 } }).count()
 // price != 100
 db.products.find({ 'price': { $not: { $eq: 100 } } }).count()
 
+
 // 4. Nor -> $nor
 
 // syntax -
@@ -152,10 +156,12 @@ db.products.find({ $or: [{ 'price': { $gt: 100 } }, { 'name': 'Diamond Ring' }] 
 
 // 2. limit
 
+
 // 3. skip
 
 db.products.find({ 'price': { $in: [1299, 299, 799, 149] } }).limit(10).skip(1)
-// Here documents ka limit fixed , if i skik 5 data it wo ignore top 5 documents and add dhow next  document
+// Here documents ka limit fixed , if i skip 5 data then this will ignore top 5 documents 
+// and add next 5 down data
 
 // 4. sort -> this is not work with in and notin operator
 
@@ -190,6 +196,7 @@ db.products.find({ $expr: { $eq: ['$price', 899] } })
     { "_id": 5, "quantity": 5, "price": 55, "targetPrice": 150 }
 ]
 
+// multiply between _id and price , if multiply data is greater than totalPrice then return that document
 db.sales.find({ $expr: { $gt: [{ $multiply: ['$_id', '$price'] }, '$targetPrice'] } })
 [
     { _id: 3, quantity: 6, price: 35, targetPrice: 100 },
