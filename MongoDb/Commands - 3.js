@@ -28,7 +28,7 @@ db.products.getIndexes()
     { v: 2, key: { price: 1 }, name: 'price_1' }
 ]
 
-
 // This is How Drop The Index 
+
 db.collection.dropIndex({ field: 1 });
 db.collection.dropIndex("index_name");
